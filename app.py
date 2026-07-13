@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, session
+import os
+from flask import Flask, render_template, request, redirect, session, url_for
 
 app = Flask(__name__)
 app.secret_key = "dev-key-2025"
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 USERS = {
     "admin": {
@@ -61,6 +63,31 @@ def logout():
 def search():
     query = request.args.get("q", "")
     return render_template("search.html", query=query)
+
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    if "username" not in session:
+        return redirect("/login")
+
+    error = None
+    success_url = None
+    filename = None
+
+    if request.method == "POST":
+        file = request.files.get("file")
+        if file and file.filename:
+            filename = file.filename
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+            success_url = url_for('static', filename=f'uploads/{filename}')
+        else:
+            error = "请选择要上传的文件"
+
+    return render_template("upload.html", error=error, success_url=success_url, filename=filename)
 
 
 if __name__ == "__main__":
