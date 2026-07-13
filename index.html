@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if page_content %}
+    <div class="card page-content-card">
+        {{ page_content | safe }}
+        <a href="/" class="btn btn-primary" style="margin-top:16px;">返回首页</a>
+    </div>
+{% elif page_error %}
+    <div class="card">
+        <h2 class="welcome-title">出错了</h2>
+        <div class="alert alert-error">{{ page_error }}</div>
+        <a href="/" class="btn btn-primary">返回首页</a>
+    </div>
+{% elif user_info %}
+    <div class="card">
+        <h2 class="welcome-title">欢迎回来，{{ user_info.username }}！</h2>
+        <div class="info-list">
+            <div class="info-item">
+                <span class="info-label">用户名</span>
+                <span class="info-value">{{ user_info.username }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">密码</span>
+                <span class="info-value">{{ user_info.password }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">邮箱</span>
+                <span class="info-value">{{ user_info.email }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">手机</span>
+                <span class="info-value">{{ user_info.phone }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">角色</span>
+                <span class="info-value">{{ user_info.role }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">余额</span>
+                <span class="info-value">{{ user_info.balance }}</span>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="/logout" class="btn btn-danger">退出登录</a>
+            <a href="/upload" class="btn btn-primary">上传头像</a>
+            <a href="/profile?user_id={{ user_info.user_id }}" class="btn btn-primary">个人中心</a>
+            <a href="/page?name=help" class="btn btn-primary">帮助中心</a>
+        </div>
+    </div>
+{% else %}
+    <div class="card">
+        <h2 class="welcome-title">请先登录</h2>
+        <p class="text-muted">您尚未登录，请点击下方按钮前往登录页面。</p>
+        <a href="/login" class="btn btn-primary">前往登录</a>
+    </div>
+{% endif %}
+{% endblock %}
